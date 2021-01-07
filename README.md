@@ -58,6 +58,12 @@ When calling the tensorboard magic, make sure to pass the `--bind_all` flag. Oth
 
 The Homework08 folder contains an example notebook taken from tensorflows documentation to illustrate the process.
 
+# Setting a password
+
+If you want to set custom password for your server instead of having to grab the randomized token everytime, you can pass a token via an docker environment variable when running the container
+
+`-e JUPYTER_TOKEN=my_super_secure_password`
+
 # Quitting the server and container
 
 Once you shutdown the notebook server, the container will close as well.
