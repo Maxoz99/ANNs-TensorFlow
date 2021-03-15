@@ -1,5 +1,4 @@
 import tensorflow as tf
-import numpy as np
 import time
 
 
@@ -15,11 +14,13 @@ class TrainModel():
         self.num_content_layers = num_layers[1]
 
         # Set defaults for optional paramters
-        self.epochs = 5
+        self.epochs = 1
         self.steps_per_epoch = 100
         self.optimizer = tf.optimizers.Adam(learning_rate=0.02, beta_1=0.99, epsilon=1e-1)
+        # Regulates the importance of preserving content vs applying style
         self.content_weight = 1e-2
         self.style_weight = 1e4
+        # Strength of the high pass filter
         self.total_variation_weight=30
 
 

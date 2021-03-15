@@ -35,3 +35,14 @@ def gram_matrix(input_tensor):
     n = tf.shape(a)[0]
     gram = tf.matmul(a, a, transpose_a=True)
     return gram / tf.cast(n, tf.float32)
+
+
+def calculate_content_style_weights(factor):
+    """Adjust the weight according to the presented ratio"""
+    content_weight = 1 - factor
+    style_weight = factor
+    return content_weight, style_weight
+
+
+def save_img(img, filename):
+    tensor_to_image(img).save(filename)

@@ -1,84 +1,84 @@
 import tkinter as tk
-from tkinter import Label, filedialog
+from tkinter import ttk
+
+from tkinter import filedialog as fd
 from PIL import ImageTk, Image
 
-content_style_ratio = 0.5
+class ImageWindow(ttk.Frame):
+    def __init__(self, parent, *args, **kwargs):
+        super().__init__(parent)
+        
+        self.text = tk.StringVar()
+        self.label = ttk.Label(parent, text="Image Window")
+        self.label.pack(side="left", expand=True)
 
-def open_image():
-    img_path = filedialog.askopenfilename(filetypes=(("image files","*.jpg"),("All files","*.*")))
-    if len(img_path) < 1:
-        return
+    def set_text(self, text):
+        self.label.config(text=text)
 
-    img = Image.open(img_path)
-    img = img.resize((200,200), Image.ANTIALIAS)
-    render = ImageTk.PhotoImage(img)
-    return render
-
-def get_content_image():
-    content_image = open_image()
-    display_image = Label(frame_content, image=content_image)
-    display_image.pack(fill=tk.BOTH)
-
-def get_style_image():
-    style_image = open_image()
-    display_image = Label(frame_style, image=style_image)
-    display_image.pack(fill=tk.BOTH)
-
-def set_content_style_ratio(v):
-    content_style_ratio = v
+    def set_image(self, path):
+        """Displays an image in the frame"""
+        img = ImageTk.PhotoImage(image=Image.open(path))
+        self.label.configure(image=img)
+        self.label.image = img
 
 
-window = tk.Tk()
-window.title("Artistic Style Transfer")
+class Footer(ttk.Frame):
+    def __init__(self, parent, *args, **kwargs):
+        super().__init__(parent)
+        self.parent = parent
+        self.btn_select_style_img = ttk.Button(
+            parent,
+            text="Select a style image",
+            command=self.select_style_img)
 
-frame_main = tk.Frame(master=window)
-frame_main.pack(fill=tk.BOTH)
+        self.btn_select_content_img = ttk.Button(
+            parent,
+            text="Select a content image",
+            command=self.select_content_img)
 
-frame_content = tk.Frame(master=frame_main, bg="yellow", width=200, height=200)
-frame_content.pack(fill=tk.BOTH, side=tk.LEFT, expand=True)
+        self.btn_apply_style = ttk.Button(
+            parent,
+            text="Transfer Style",
+            command=self.parent.apply_style)
 
-frame_style = tk.Frame(master=frame_main, bg="red", width=200, height=200)
-frame_style.pack(fill=tk.BOTH, side=tk.LEFT, expand=True)
+        self.slider_ratio = ttk.Scale(
+            parent,
+            from_=0,
+            to=1,
+            command=self.parent.update_style_ratio,
+            length = 300,
+            orient="horizontal",
+        )
 
-frame_setup = tk.Frame(master=window, bg="blue", height=50)
-frame_setup.pack(fill=tk.BOTH, side=tk.BOTTOM)
+        content_label = ttk.Label(parent, text="Content")
+        style_label = ttk.Label(parent, text="Style")
 
-slider_content_style = tk.Scale(frame_setup, from_=0, to=100, label="Content-Scale-Ratio", orient=tk.HORIZONTAL, command=content_style_ratio)
-slider_content_style.set(content_style_ratio)
-slider_content_style.pack()
+        self.btn_select_content_img.pack(side="left", ipadx=15, padx=10)
+        self.btn_select_style_img.pack(side="left", ipadx=15, padx=20)
+        content_label.pack(side="left")
+        self.slider_ratio.pack(side="left", padx=20)
+        style_label.pack(side="left")
+        self.btn_apply_style.pack(side="right", ipadx=15, padx=20)
 
-btn_convert = tk.Button(
-    master=frame_setup,
-    text="Transfer Styles",
-    width=25,
-    height=5,
-    bg="gray",
-    fg="white",
-)
-btn_convert.pack(side=tk.RIGHT)
+    def select_content_img(self):
+        img = select_image()
+        if img:
+            self.parent.content_path = img
+            self.parent.update_image("content")
 
-btn_open_content = tk.Button(
-    master=frame_setup,
-    text="Select Content Image",
-    command=get_content_image,
-    width=25,
-    height=4,
-    bg="gray",
-    fg="white",
-)
-btn_open_content.pack(side=tk.LEFT)
-
-btn_open_style = tk.Button(
-    master=frame_setup,
-    text="Select Style Image",
-    command=get_style_image,
-    width=25,   
-    height=4,
-    bg="gray",
-    fg="white",
-)
-btn_open_style.pack(side=tk.LEFT)
+    def select_style_img(self):
+        img = select_image()
+        if img:
+            self.parent.style_path = img
+            self.parent.update_image("style")
 
 
-window.mainloop()
-
+def select_image():
+    """Opens a file dialog to pick an image and uses this path to access the image for training and display"""
+    img_path = fd.askopenfilename(
+        title="Select an Image",
+        filetypes=(("image files","*.jpg"),("All files","*.*")),
+        initialdir="../../assets"
+    )
+    if img_path:
+        return img_path
