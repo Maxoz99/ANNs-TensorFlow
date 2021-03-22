@@ -73,6 +73,17 @@ class Footer(ttk.Frame):
             self.parent.update_image("style")
 
 
+class PopoutImage(tk.Toplevel):
+    def __init__(self, *args, **kwargs):
+        super().__init__()
+        self.image_frame = ImageWindow(self)
+        self.geometry("600x600+100+100")
+        self.image_frame.set_text("Applying style...please wait")
+        self.image_frame.pack()
+        btn_save = ttk.Button(self, text="Save Image", command=select_save_loc)
+        btn_save.pack(side="bottom")
+
+
 def select_image():
     """Opens a file dialog to pick an image and uses this path to access the image for training and display"""
     img_path = fd.askopenfilename(
@@ -82,3 +93,13 @@ def select_image():
     )
     if img_path:
         return img_path
+
+
+def select_save_loc():
+    savepath = fd.asksaveasfilename(
+        title="Select save location",
+        filetypes=(("image files","*.jpg"),("All files","*.*")),
+    )
+    
+    if savepath:
+        return savepath

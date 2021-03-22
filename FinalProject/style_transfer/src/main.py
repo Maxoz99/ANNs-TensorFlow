@@ -4,8 +4,8 @@ import time
 
 from models import StyleContentModel
 from neural_network import TrainModel 
-from gui import ImageWindow, Footer
-from utils import load_img, save_img, calculate_content_style_weights
+from gui import ImageWindow, Footer, PopoutImage
+from utils import load_img, save_img, calculate_content_style_weights, create_dir
 
 class Application(tk.Tk):
     def __init__(self):
@@ -22,11 +22,11 @@ class Application(tk.Tk):
         self.content_style_ratio = 0
 
         self.content_frame = ImageWindow(container)
-        self.content_frame.set_text("Content Frame")
+        self.content_frame.set_text("Select a content image!")
         self.content_frame.pack()
 
         self.style_frame = ImageWindow(container)
-        self.style_frame.set_text("Style Frame")
+        self.style_frame.set_text("Select a style image!")
         self.style_frame.pack()
 
         self.footer = Footer(self)
@@ -43,6 +43,8 @@ class Application(tk.Tk):
         self.content_style_ratio = float(value)
 
     def apply_style(self):
+
+        self.popout_window = PopoutImage()
 
         start_time = time.time()
 
@@ -75,6 +77,8 @@ class Application(tk.Tk):
 
         # --- Training ---
 
+        create_dir("tmp")
+
         image = tf.Variable(content_image)
 
         trainer = TrainModel(model, image, (style_targets, content_targets), (num_style_layers, num_content_layers))
@@ -85,9 +89,11 @@ class Application(tk.Tk):
         print(f"Content weight: {content_weight}")
 
         result = trainer.train()
-        save_img(result, "styled_image.png")
+        save_img(result, "tmp/styled_image.png")
         end_time = time.time()
         print(f"Application finished in: {end_time-start_time:.1f}")
+
+        self.popout_window.image_frame.set_image("tmp/styled_image.png")
 
 if __name__ == "__main__":
     app = Application()

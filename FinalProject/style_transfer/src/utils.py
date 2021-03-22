@@ -1,6 +1,7 @@
 import PIL.Image
 import numpy as np
 import tensorflow as tf
+import os
 
 
 def load_img(path_to_img):
@@ -46,3 +47,15 @@ def calculate_content_style_weights(factor):
 
 def save_img(img, filename):
     tensor_to_image(img).save(filename)
+
+
+def create_dir(path):
+    if not os.path.exists(path):
+        try:
+            os.mkdir(path)
+        except OSError:
+            print ("Creation of the directory %s failed" % path)
+        else:
+            print ("Successfully created the directory %s " % path)
+    else:
+        print("Path already exists.")
