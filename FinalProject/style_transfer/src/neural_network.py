@@ -39,7 +39,10 @@ class TrainModel():
 
 
     def set_total_variation(self, total_variation_weight):
-        self.total_variation_weight = total_variation_weight
+        if total_variation_weight >=1:
+            self.total_variation_weight = total_variation_weight
+        elif total_variation_weight <1:
+            self.total_variation_weight = 0.001
 
 
     def get_time(self):
@@ -52,10 +55,11 @@ class TrainModel():
         self.start_time = time.time()
 
         step = 0
-        for _ in range(self.epochs):
+        for epoch in range(self.epochs):
             for _ in range(self.steps_per_epoch):
                 step += 1
                 self._train_step()
+            print(f"Epoch {epoch+1}/{self.epochs}...")
 
         self.end_time = time.time()
         return self.image

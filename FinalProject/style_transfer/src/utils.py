@@ -21,6 +21,14 @@ def load_img(path_to_img):
     return img
 
 
+def img_prop_resize(image, height):
+    """Resize a PIL image to height while preserving the aspect ratio"""
+    height_percent = height / image.size[1]
+    width_size = int(image.size[0] * height_percent)
+    image = image.resize((width_size, height), PIL.Image.NEAREST)
+    return image
+
+
 def tensor_to_image(tensor):
     tensor = tensor*255
     tensor = np.array(tensor, dtype=np.uint8)

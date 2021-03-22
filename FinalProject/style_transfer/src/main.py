@@ -1,5 +1,6 @@
 import tensorflow as tf
 import tkinter as tk
+from tkinter import ttk
 import time
 
 from models import StyleContentModel
@@ -11,8 +12,15 @@ class Application(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("Style Transfer Application")
-        self.geometry("%dx%d+0+0" % self.maxsize())
+        # Opens window maximized
+        w, h = self.winfo_screenwidth(), self.winfo_screenheight()
+        self.geometry("%dx%d+0+0" % (w, h))
+
         self.minsize(700,400)
+
+        # Choose another theme for the gui
+        self.style = ttk.Style(self)
+        self.style.theme_use("clam")
 
         container = tk.Frame(self)
         container.pack(fill="both", expand=True)
@@ -85,6 +93,8 @@ class Application(tk.Tk):
 
         content_weight, style_weight = calculate_content_style_weights(self.content_style_ratio)
         trainer.set_content_style_ratio(content_weight, style_weight)
+        trainer.set_epochs(epochs=self.footer.epochs.get(), steps_per_epoch=self.footer.steps.get())
+        trainer.set_total_variation(self.footer.total_variation.get())
 
         print(f"Content weight: {content_weight}")
 
