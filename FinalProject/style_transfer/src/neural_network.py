@@ -51,7 +51,7 @@ class TrainModel():
 
 
     def train(self):
-        """Should return the transfered image"""
+        """Transfer style for number of epochs and return the final image"""
         self.start_time = time.time()
 
         step = 0
@@ -76,17 +76,19 @@ class TrainModel():
         self.optimizer.apply_gradients([(grad, self.image)])
         self.image.assign(clip_0_1(self.image))
 
-    
+    @tf.function()
     def _style_content_loss(self, outputs):
+        """Calculate relative loss to style and content image and return total loss"""
         style_outputs = outputs['style']
         content_outputs = outputs['content']
-        style_loss = type_loss(style_outputs, self.style_targets, self.style_weight, self.num_style_layers)
-        content_loss = type_loss(content_outputs, self.content_targets, self.content_weight, self.num_content_layers)
+        style_loss = relative_loss(style_outputs, self.style_targets, self.style_weight, self.num_style_layers)
+        content_loss = relative_loss(content_outputs, self.content_targets, self.content_weight, self.num_content_layers)
         loss = style_loss + content_loss
         return loss
 
 
 def mse(base_content, target):
+    """Calculate the mean square error of content and target"""
     return tf.reduce_mean(tf.square(base_content - target))
 
 
@@ -94,8 +96,8 @@ def clip_0_1(image):
   return tf.clip_by_value(image, clip_value_min=0.0, clip_value_max=1.0)
 
 
-# Bin hier mit dem Namen noch nicht zufrieden, gerne Vorschläge machen
-def type_loss(output, target, weight, num_layers):
+def relative_loss(output, target, weight, num_layers):
+    """Calculates the weighted mean square error to a target image"""
     type_loss = tf.add_n([mse(output[name], target[name]) for name in output.keys()])
     type_loss *= weight / num_layers
     return type_loss

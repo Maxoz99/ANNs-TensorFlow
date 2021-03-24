@@ -132,7 +132,7 @@ def select_image():
     img_path = fd.askopenfilename(
         title="Select an Image",
         filetypes=(("image files","*.jpg"),("All files","*.*")),
-        initialdir="../../assets"
+        initialdir="../assets"
     )
     if img_path:
         return img_path
