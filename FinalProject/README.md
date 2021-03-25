@@ -18,6 +18,8 @@ This repository includes
 
 ## The GUI
 
+Checkout a demo of the workflow on [Loom](https://www.loom.com/share/116e47f5f3004186859b8d067c3d5b28)
+
 ### Features
 
 - Select style and content image from your local file system
