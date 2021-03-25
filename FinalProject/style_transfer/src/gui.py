@@ -59,8 +59,8 @@ class Footer(ttk.Frame):
 
         slider_ratio = ttk.Scale(
             style_content_frame,
-            from_=0,
-            to=1,
+            from_=5,
+            to=-5,
             command=self.parent.update_style_ratio,
             length = 300,
             orient="horizontal",

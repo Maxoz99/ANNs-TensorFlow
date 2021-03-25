@@ -48,8 +48,8 @@ def gram_matrix(input_tensor):
 
 def calculate_content_style_weights(factor):
     """Adjust the weight according to the presented ratio"""
-    content_weight = 1 - factor
-    style_weight = factor
+    content_weight = 10 ** factor
+    style_weight = 10 ** -factor
     return content_weight, style_weight
 
 
